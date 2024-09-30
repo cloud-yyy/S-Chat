@@ -3,18 +3,13 @@ using System.Net.Sockets;
 using System.Text;
 
 var clients = new List<Socket>();
-
-var host = "192.168.1.176";
 var port = 5001;
-
 var cancellationToken = new CancellationTokenSource();
+var ipEndPoint = new IPEndPoint(IPAddress.Any, port);
 
 using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-var ipEndPoint = new IPEndPoint(IPAddress.Any, port);
-
 socket.Bind(ipEndPoint);
-
 socket.Listen(10);
 
 Console.WriteLine("Waiting for clients...");
@@ -39,11 +34,10 @@ async Task Handle(Socket clientSocket)
 		if (receivedBytes == 0)
 			break;
 
-		string message = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
+		var message = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
 		
 		Console.WriteLine($"New message received: {message}");
-
-		BroadcastMessage(message, clientSocket);
+		Broadcast(message, clientSocket);
 	}
 
 	clients.Remove(clientSocket);
@@ -52,7 +46,7 @@ async Task Handle(Socket clientSocket)
 	clientSocket.Close();
 }
 
-void BroadcastMessage(string message, Socket sender)
+void Broadcast(string message, Socket sender)
 {
 	var buffer = Encoding.UTF8.GetBytes(message);
 
