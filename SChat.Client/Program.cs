@@ -59,7 +59,7 @@ async Task StartWriting()
 	
 	while (true)
 	{
-		input = "you: " + Console.ReadLine();
+		input = deviceName + ": " + Console.ReadLine();
 
 		Console.SetCursorPosition(0, Console.GetCursorPosition().Top - 1);
 		Print(input, ConsoleColor.DarkRed);
